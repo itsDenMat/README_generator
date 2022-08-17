@@ -2,104 +2,144 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 
-const generateMarkdown = require('./utils/generateMarkdown.js');
+const generatePage = require('./utils/generateMarkdown.js');
 
 // TODO: Create an array of questions for user input
 const questions = () => { 
     return inquirer.prompt([
-    {
-        type: 'input',
-        name: 'github',
-        message: 'What is your GitHub username?',
-        validate: function (answer) {
-            if (answer.length < 1) {
-                return console.log("GitHub username is required.");
+        {
+            type: 'input',
+            name: 'github',
+            message: 'What is your GitHub username?',
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter your GitHub username!');
+                    return false; 
+                }
+            } 
+        },
+        {
+            type: 'input',
+            name: 'email',
+            message: 'What is your email address?',
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter your email address!');
+                    return false; 
+                }
             }
-            return true;
-        }
-    },
-    {
-        type: 'input',
-        name: 'email',
-        message: 'What is your email address?',
-        validate: function (answer) {
-            if (answer.length < 5 ) {
-                return console.log("Please enter a valid email address.");
+    
+        },
+        {
+            type: 'input',
+            name: 'title',
+            message: 'What is your project name?',
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter your project name!');
+                    return false; 
+                }
             }
-            return true;
-        }
-    },
-    {
-        type: 'input',
-        name: 'title',
-        message: 'What is the title of your project?',
-        vcalidate: function (answer) {
-            if (answer.length < 1) {
-                return console.log("You need to enter a valid title for your project.");
+        },
+        {
+            type: 'input',
+            name: 'description',
+            message: 'Please write a short description of your project.',
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter a description of your project!');
+                    return false; 
+                }
             }
-            return true;
+        }, 
+        {
+            type: 'input',
+            name: 'install',
+            message: 'What are the steps required to install your project?',
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter steps required to install your project!');
+                    return false; 
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'usage',
+            message: 'How do you use this app?',
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter a usage description!');
+                    return false; 
+                }
+            }
+        },
+        {
+            type: 'list',
+            name: 'license',
+            message: 'What kind of license should your project have?',
+            choices: ['MIT', 'GNU', 'Unlicensed'],
+            default: ["MIT"],
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please choose a license!');
+                    return false; 
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'test', 
+            message: 'What command should be run to run tests?',
+            default: 'npm test'
+        },
+        {
+            type: 'input',
+            name: 'contributors',
+            message: 'What does the user need to know about contributing to the repo?'
         }
-    },
-    {
-        type: 'input',
-        name: 'description',
-        message: 'Write a description of your project.',
-    },
-    {
-        type: 'input',
-        name: 'install',
-        message: 'Enter the steps required to install your application.',
-    },
-    {
-        type: 'input',
-        name: 'install',
-        message: 'Provide information on how to properly use your application.',
-    },
-    {
-        type: 'input',
-        name: 'contribute',
-        message: 'Provide guidelines on how other developers can contribute to your project.',
-    },
-    {
-        type: 'input',
-        name: 'test',
-        message: 'Provide any tests written for your applications. Please provide examples on how to run the tests.',
-    },
-    {
-        type: 'list',
-        name: 'license',
-        message: 'Choose a license to apply to your project.',
-        choices: ['Apache 2.0', 'MIT'],
-    }
-]);
-};
+    ]);
+    };
 
 // TODO: Create a function to write README file
-function writeToFile = data => {
-    fs.writeToFile("README.md", data, err => {
+const writeFile = data => {
+    fs.writeFile('READMEsample.md', data, err => {
+        // if there is an error 
         if (err) {
             console.log(err);
             return;
+        // when the README has been created 
         } else {
-            console.log("You have successfully created your README file!");
+            console.log("Your README has been successfully created!")
         }
     })
-}
+}; 
 
 // TODO: Create a function to initialize app
-function init() {
-
-    .then(answers => {
-        return generatePage(answers);
-    })
-    .then(data => {
-        return fs.writeFile(data);
-    })
-
-    .catch(err => {
-        console.log(err)
-    })
-};
-
-// Function call to initialize app
-init();
+questions()
+// getting user answers 
+.then(answers => {
+    return generatePage(answers);
+})
+// using data to display on page 
+.then(data => {
+    return writeFile(data);
+})
+// catching errors 
+.catch(err => {
+    console.log(err)
+})
